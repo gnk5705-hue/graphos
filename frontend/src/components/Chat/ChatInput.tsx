@@ -41,7 +41,7 @@ export default function ChatInput({ onSend, disabled }: Props) {
         onChange={(e) => setValue(e.target.value)}
         onKeyDown={handleKeyDown}
         onInput={handleInput}
-        placeholder="메시지를 입력하세요... (Shift+Enter로 줄바꿈)"
+        placeholder="Type a message... (Shift+Enter for a new line)"
         disabled={disabled}
         rows={1}
         className="flex-1 bg-gray-800 text-gray-100 placeholder-gray-500 rounded-xl px-4 py-2.5 resize-none outline-none focus:ring-1 focus:ring-indigo-500 text-sm leading-relaxed disabled:opacity-50"

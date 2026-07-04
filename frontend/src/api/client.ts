@@ -26,7 +26,7 @@ export const sendMessageStream = async (
   });
 
   if (!response.ok || !response.body) {
-    callbacks.onError(new Error(`서버 오류: ${response.status}`));
+    callbacks.onError(new Error(`Server error: ${response.status}`));
     return;
   }
 
@@ -72,8 +72,10 @@ export const deleteConversation = async (conversationId: string) => {
 
 // ── Graph ────────────────────────────────────────────────────────────────────
 
-export const getGraph = async (): Promise<GraphData> => {
-  const { data } = await api.get('/api/graph');
+export const getGraph = async (conversationId?: string | null): Promise<GraphData> => {
+  const { data } = await api.get('/api/graph', {
+    params: conversationId ? { conversation_id: conversationId } : {},
+  });
   return data;
 };
 
@@ -163,7 +165,7 @@ export const chatWithAgent = async (
   });
 
   if (!response.ok || !response.body) {
-    callbacks.onError(new Error(`서버 오류: ${response.status}`));
+    callbacks.onError(new Error(`Server error: ${response.status}`));
     return;
   }
 
@@ -209,7 +211,7 @@ export const executeAction = async (
   });
 
   if (!response.ok || !response.body) {
-    callbacks.onError(new Error(`서버 오류: ${response.status}`));
+    callbacks.onError(new Error(`Server error: ${response.status}`));
     return;
   }
 

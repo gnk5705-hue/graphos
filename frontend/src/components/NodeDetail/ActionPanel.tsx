@@ -14,13 +14,13 @@ interface Action {
 }
 
 const ACTIONS: Action[] = [
-  { key: 'generate_prd', label: 'PRD 생성', description: '제품 요구사항 문서 작성', icon: '📋', color: '#34d399', streaming: true },
-  { key: 'generate_document', label: '문서 생성', description: '상세 문서/리포트 작성', icon: '📝', color: '#60a5fa', streaming: true },
-  { key: 'generate_code', label: '코드 생성', description: '구현 코드 작성', icon: '💻', color: '#a78bfa', streaming: true },
-  { key: 'generate_summary', label: '요약 생성', description: '핵심 내용 요약', icon: '✨', color: '#fbbf24', streaming: true },
-  { key: 'create_task', label: '태스크 생성', description: '연결된 작업 노드 추가', icon: '✅', color: '#94a3b8', streaming: false },
-  { key: 'github_issue', label: 'GitHub Issue', description: 'GitHub 이슈 생성', icon: '🐙', color: '#f472b6', streaming: false, requiresConfig: 'github' },
-  { key: 'notion_export', label: 'Notion 내보내기', description: 'Notion 페이지로 저장', icon: '📔', color: '#6366f1', streaming: false, requiresConfig: 'notion' },
+  { key: 'generate_prd', label: 'Generate PRD', description: 'Write a product requirements document', icon: '📋', color: '#34d399', streaming: true },
+  { key: 'generate_document', label: 'Generate Document', description: 'Write a detailed document/report', icon: '📝', color: '#60a5fa', streaming: true },
+  { key: 'generate_code', label: 'Generate Code', description: 'Write implementation code', icon: '💻', color: '#a78bfa', streaming: true },
+  { key: 'generate_summary', label: 'Generate Summary', description: 'Summarize key points', icon: '✨', color: '#fbbf24', streaming: true },
+  { key: 'create_task', label: 'Create Task', description: 'Add a linked task node', icon: '✅', color: '#94a3b8', streaming: false },
+  { key: 'github_issue', label: 'GitHub Issue', description: 'Create a GitHub issue', icon: '🐙', color: '#f472b6', streaming: false, requiresConfig: 'github' },
+  { key: 'notion_export', label: 'Export to Notion', description: 'Save as a Notion page', icon: '📔', color: '#6366f1', streaming: false, requiresConfig: 'notion' },
 ];
 
 interface IntegrationStatus {
@@ -80,7 +80,7 @@ export default function ActionPanel({ node }: Props) {
             api.getGraph().then(setGraphData).catch(() => {});
           },
           onError: (err) => {
-            setOutput(`오류: ${err.message}`);
+            setOutput(`Error: ${err.message}`);
           },
         });
       } finally {
@@ -121,7 +121,7 @@ export default function ActionPanel({ node }: Props) {
               disabled={isDisabled || needsConfig}
               className="relative text-left p-2.5 rounded-xl border border-gray-800 hover:border-gray-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
               style={isRunning ? { borderColor: action.color + '66', background: action.color + '11' } : {}}
-              title={needsConfig ? `.env에 ${action.requiresConfig?.toUpperCase()} 설정이 필요합니다` : action.description}
+              title={needsConfig ? `Requires ${action.requiresConfig?.toUpperCase()} configuration in .env` : action.description}
             >
               <div className="flex items-center gap-2 mb-1">
                 <span className="text-base">{action.icon}</span>
@@ -129,7 +129,7 @@ export default function ActionPanel({ node }: Props) {
                   <div className="w-3 h-3 border border-current border-t-transparent rounded-full animate-spin" style={{ color: action.color }} />
                 )}
                 {needsConfig && (
-                  <span className="text-[9px] text-gray-600">미설정</span>
+                  <span className="text-[9px] text-gray-600">Not configured</span>
                 )}
               </div>
               <p className="text-[11px] font-semibold text-gray-300">{action.label}</p>
@@ -143,10 +143,10 @@ export default function ActionPanel({ node }: Props) {
       {(output !== null || result) && (
         <div className="bg-gray-900 rounded-xl border border-gray-800 overflow-hidden">
           <div className="flex items-center justify-between px-3 py-2 border-b border-gray-800">
-            <span className="text-[10px] text-gray-400 font-semibold">{outputTitle} 결과</span>
+            <span className="text-[10px] text-gray-400 font-semibold">{outputTitle} Result</span>
             <div className="flex items-center gap-2">
               {isStreaming && (
-                <span className="text-[9px] text-indigo-400 animate-pulse">생성 중...</span>
+                <span className="text-[9px] text-indigo-400 animate-pulse">Generating...</span>
               )}
               <button
                 onClick={() => { setOutput(null); setResult(null); }}
@@ -171,11 +171,11 @@ export default function ActionPanel({ node }: Props) {
           {result && !output && (
             <div className="p-3">
               {result.type === 'task_created' && (
-                <p className="text-xs text-emerald-400">✅ 태스크 노드가 그래프에 추가됐습니다</p>
+                <p className="text-xs text-emerald-400">✅ Task node added to the graph</p>
               )}
               {result.url && result.type !== 'error' && (
                 <p className="text-xs text-indigo-400">
-                  ✅ 생성 완료:{' '}
+                  ✅ Generated:{' '}
                   <a href={result.url} target="_blank" rel="noopener noreferrer" className="underline break-all">
                     {result.url}
                   </a>
@@ -197,7 +197,7 @@ export default function ActionPanel({ node }: Props) {
                   <rect x="9" y="9" width="13" height="13" rx="2" ry="2" />
                   <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
                 </svg>
-                복사
+                Copy
               </button>
             </div>
           )}

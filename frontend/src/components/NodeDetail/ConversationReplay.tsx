@@ -56,7 +56,7 @@ export default function ConversationReplay({ nodeId }: { nodeId: string }) {
   if (!data || data.threads.length === 0) {
     return (
       <div className="py-8 text-center text-gray-600 text-xs">
-        이 노드와 관련된 대화가 없습니다
+        No conversations related to this node
       </div>
     );
   }
@@ -72,7 +72,7 @@ export default function ConversationReplay({ nodeId }: { nodeId: string }) {
               onClick={() => handleJumpToConversation(thread.conversation_id)}
               className="flex items-center gap-1 text-[10px] text-indigo-400 hover:text-indigo-300 transition-colors ml-2 flex-shrink-0"
             >
-              원본 열기
+              Open original
               <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                 <polyline points="9 18 15 12 9 6" />
               </svg>
@@ -99,7 +99,7 @@ export default function ConversationReplay({ nodeId }: { nodeId: string }) {
                 <div className="flex-1 min-w-0 pb-1">
                   <p className="text-[11px] text-gray-400 leading-relaxed line-clamp-3">{msg.content}</p>
                   <p className="text-[9px] text-gray-700 mt-0.5">
-                    {new Date(msg.created_at).toLocaleString('ko-KR', {
+                    {new Date(msg.created_at).toLocaleString('en-US', {
                       month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit'
                     })}
                   </p>

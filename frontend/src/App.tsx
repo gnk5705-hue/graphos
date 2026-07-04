@@ -16,6 +16,7 @@ export default function App() {
   const {
     setConversations,
     setGraphData,
+    mergeGlobalNodes,
     rightPanel,
     searchQuery,
     setSearchQuery,
@@ -44,7 +45,16 @@ export default function App() {
       try {
         const data = JSON.parse(event.data);
         if (data.type === 'graph_update') {
-          setGraphData({ nodes: data.nodes, edges: data.edges } as GraphData);
+          const graph = { nodes: data.nodes, edges: data.edges } as GraphData;
+          if (data.conversation_id) {
+            // Scoped to one conversation's mind map - only apply if it's the one being viewed.
+            if (data.conversation_id === useAppStore.getState().activeConversationId) {
+              setGraphData(graph);
+            }
+          } else {
+            // Global nodes (agents, agent-session topics) - always visible, merge in place.
+            mergeGlobalNodes(graph);
+          }
         }
       } catch { /* ignore */ }
     };
@@ -53,7 +63,7 @@ export default function App() {
       reconnectRef.current = setTimeout(connectWebSocket, 3000);
     };
     ws.onerror = () => ws.close();
-  }, [setGraphData]);
+  }, [setGraphData, mergeGlobalNodes]);
 
   useEffect(() => {
     const init = async () => {
@@ -128,7 +138,7 @@ export default function App() {
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#6b7280" strokeWidth="2">
             <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
           </svg>
-          <span className="text-xs text-gray-600 flex-1">{searchQuery || '의미 기반 검색...'}</span>
+          <span className="text-xs text-gray-600 flex-1">{searchQuery || 'Semantic search...'}</span>
           <span className="text-[10px] text-gray-700 hidden sm:block">⌘K</span>
         </button>
 
@@ -157,7 +167,7 @@ export default function App() {
         <button
           onClick={() => setShowIntegrationConfig(true)}
           className="p-1.5 rounded-lg text-gray-600 hover:text-gray-300 hover:bg-gray-800 transition-colors"
-          title="연동 설정"
+          title="Integration settings"
         >
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
             <circle cx="12" cy="12" r="3" />
@@ -172,7 +182,7 @@ export default function App() {
             wsStatus === 'connecting' ? 'bg-yellow-500 animate-pulse' : 'bg-red-500'
           }`} />
           <span className="text-[10px] text-gray-600">
-            {wsStatus === 'connected' ? 'Live' : wsStatus === 'connecting' ? '연결 중' : '오프라인'}
+            {wsStatus === 'connected' ? 'Live' : wsStatus === 'connecting' ? 'Connecting' : 'Offline'}
           </span>
         </div>
       </div>

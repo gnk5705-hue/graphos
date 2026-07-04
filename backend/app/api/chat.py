@@ -93,12 +93,12 @@ async def chat(request: ChatRequest, db: Session = Depends(get_db)):
         except Exception:
             pass
 
-        existing_nodes = [n.label for n in get_full_graph(db).nodes]
+        existing_nodes = [n.label for n in get_full_graph(db, conversation_id).nodes]
         extraction = await extract_topics(request.message, full_response, existing_nodes)
 
         created_node_labels = []
         for node_data in extraction.get("nodes", []):
-            node = upsert_node(db, node_data["name"], node_data["type"], node_data["description"])
+            node = upsert_node(db, node_data["name"], node_data["type"], node_data["description"], conversation_id=conversation_id)
             created_node_labels.append(node.label)
             try:
                 emb = await generate_embedding(f"{node.label}: {node_data.get('description', '')}")
@@ -108,13 +108,13 @@ async def chat(request: ChatRequest, db: Session = Depends(get_db)):
                 pass
 
         for rel in extraction.get("relationships", []):
-            upsert_edge(db, rel["source"], rel["target"], rel["relationship"])
+            upsert_edge(db, rel["source"], rel["target"], rel["relationship"], conversation_id=conversation_id)
 
         if created_node_labels:
-            link_message_to_nodes(db, user_msg.id, created_node_labels)
-            link_message_to_nodes(db, assistant_msg_id, created_node_labels)
+            link_message_to_nodes(db, user_msg.id, created_node_labels, conversation_id=conversation_id)
+            link_message_to_nodes(db, assistant_msg_id, created_node_labels, conversation_id=conversation_id)
 
-        await broadcast_graph_update(db)
+        await broadcast_graph_update(db, conversation_id)
         yield f"data: {{\"done\": true, \"message_id\": \"{assistant_msg_id}\"}}\n\n"
 
     return StreamingResponse(

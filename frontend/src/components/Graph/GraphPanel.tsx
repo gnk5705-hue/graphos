@@ -127,7 +127,7 @@ export default function GraphPanel({ onOpenAgent }: { onOpenAgent?: (node: impor
             <line x1="18" y1="18" x2="14" y2="14" />
           </svg>
           <p className="text-sm text-center">
-            대화를 시작하면<br />여기에 마인드맵이 생성됩니다
+            Start a conversation<br />and your mind map will appear here
           </p>
         </div>
       )}
@@ -169,7 +169,7 @@ export default function GraphPanel({ onOpenAgent }: { onOpenAgent?: (node: impor
         </h2>
         {graphData.nodes.length > 0 && (
           <p className="text-[10px] text-gray-700 mt-0.5">
-            {graphData.nodes.length}개 노드 · {graphData.edges.length}개 연결
+            {graphData.nodes.length} nodes · {graphData.edges.length} connections
           </p>
         )}
       </div>

@@ -108,7 +108,7 @@ export default function AgentPanel({ agentNode, onClose }: Props) {
           api.getAgentSessions(agentNode.id).then(setSessions).catch(() => {});
         },
         onError: () => {
-          setMessages((prev) => [...prev, { role: 'assistant', content: '오류가 발생했습니다.' }]);
+          setMessages((prev) => [...prev, { role: 'assistant', content: 'An error occurred.' }]);
           setStreamingContent(null);
         },
       });
@@ -143,7 +143,7 @@ export default function AgentPanel({ agentNode, onClose }: Props) {
             <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
               <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
             </svg>
-            새 대화
+            New Chat
           </button>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-300 p-1 rounded-lg hover:bg-gray-800">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -166,7 +166,7 @@ export default function AgentPanel({ agentNode, onClose }: Props) {
                 >
                   <p className="truncate font-medium">{s.title}</p>
                   <p className="text-[9px] text-gray-700 mt-0.5">
-                    {new Date(s.created_at).toLocaleDateString('ko-KR')}
+                    {new Date(s.created_at).toLocaleDateString('en-US')}
                   </p>
                 </button>
               ))}
@@ -180,8 +180,8 @@ export default function AgentPanel({ agentNode, onClose }: Props) {
                 <div className="flex flex-col items-center justify-center h-full gap-3 text-gray-600 pb-16">
                   <div className="text-3xl">{icon}</div>
                   <p className="text-xs text-center px-6">
-                    {agentNode.label}에게 무엇이든 물어보세요.<br />
-                    대화 내용은 자동으로 그래프에 반영됩니다.
+                    Ask {agentNode.label} anything.<br />
+                    Conversations are automatically reflected in the graph.
                   </p>
                 </div>
               )}
@@ -232,7 +232,7 @@ export default function AgentPanel({ agentNode, onClose }: Props) {
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleSend(); } }}
-                placeholder={`${agentNode.label}에게 메시지...`}
+                placeholder={`Message ${agentNode.label}...`}
                 disabled={isLoading}
                 rows={1}
                 className="flex-1 bg-gray-800 text-gray-100 placeholder-gray-600 rounded-xl px-3 py-2 text-xs resize-none outline-none focus:ring-1 focus:ring-indigo-500 disabled:opacity-50"

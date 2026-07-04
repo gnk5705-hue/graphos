@@ -11,12 +11,12 @@ interface Persona {
 }
 
 const PERSONAS: Persona[] = [
-  { key: 'pm', name: 'PM Agent', description: 'PRD, 로드맵, 유저 스토리 작성', color: '#34d399', icon: '📋' },
-  { key: 'research', name: 'Research Agent', description: '시장 조사, 논문 분석, 인사이트 도출', color: '#60a5fa', icon: '🔬' },
-  { key: 'engineer', name: 'Engineer Agent', description: '코드 작성, 아키텍처 설계, 기술 문서', color: '#a78bfa', icon: '💻' },
-  { key: 'designer', name: 'Designer Agent', description: 'UX 흐름, 와이어프레임, 디자인 명세', color: '#f472b6', icon: '🎨' },
-  { key: 'legal', name: 'Legal Agent', description: '계약 검토, 법적 리스크 분석, 컴플라이언스', color: '#fbbf24', icon: '⚖️' },
-  { key: 'custom', name: 'Custom Agent', description: '직접 페르소나 설정', color: '#94a3b8', icon: '✨' },
+  { key: 'pm', name: 'PM Agent', description: 'Writes PRDs, roadmaps, and user stories', color: '#34d399', icon: '📋' },
+  { key: 'research', name: 'Research Agent', description: 'Market research, paper analysis, and insights', color: '#60a5fa', icon: '🔬' },
+  { key: 'engineer', name: 'Engineer Agent', description: 'Writes code, designs architecture, technical docs', color: '#a78bfa', icon: '💻' },
+  { key: 'designer', name: 'Designer Agent', description: 'UX flows, wireframes, and design specs', color: '#f472b6', icon: '🎨' },
+  { key: 'legal', name: 'Legal Agent', description: 'Contract review, legal risk analysis, compliance', color: '#fbbf24', icon: '⚖️' },
+  { key: 'custom', name: 'Custom Agent', description: 'Define your own persona', color: '#94a3b8', icon: '✨' },
 ];
 
 interface Props {
@@ -29,7 +29,7 @@ export default function CreateAgentModal({ onClose, onCreated }: Props) {
   const [customName, setCustomName] = useState('');
   const [customPrompt, setCustomPrompt] = useState('');
   const [isCreating, setIsCreating] = useState(false);
-  const { setGraphData } = useAppStore();
+  const { mergeGlobalNodes } = useAppStore();
 
   const handleCreate = async () => {
     if (!selected) return;
@@ -41,7 +41,7 @@ export default function CreateAgentModal({ onClose, onCreated }: Props) {
         custom_system_prompt: selected === 'custom' ? customPrompt : undefined,
       });
       const graph = await api.getGraph();
-      setGraphData(graph);
+      mergeGlobalNodes(graph);
       onCreated();
     } catch (err) {
       console.error(err);
@@ -58,8 +58,8 @@ export default function CreateAgentModal({ onClose, onCreated }: Props) {
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
           <div>
-            <h2 className="text-sm font-bold text-white">에이전트 생성</h2>
-            <p className="text-[10px] text-gray-500 mt-0.5">AI 에이전트를 그래프에 추가합니다</p>
+            <h2 className="text-sm font-bold text-white">Create Agent</h2>
+            <p className="text-[10px] text-gray-500 mt-0.5">Add an AI agent to the graph</p>
           </div>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-300 p-1 rounded-lg hover:bg-gray-800">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -95,23 +95,23 @@ export default function CreateAgentModal({ onClose, onCreated }: Props) {
             <div className="space-y-3 mb-4">
               <div>
                 <label className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider block mb-1">
-                  에이전트 이름
+                  Agent Name
                 </label>
                 <input
                   value={customName}
                   onChange={(e) => setCustomName(e.target.value)}
-                  placeholder="예: Marketing Agent"
+                  placeholder="e.g. Marketing Agent"
                   className="w-full bg-gray-800 text-gray-100 placeholder-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-indigo-500"
                 />
               </div>
               <div>
                 <label className="text-[10px] text-gray-500 font-semibold uppercase tracking-wider block mb-1">
-                  시스템 프롬프트
+                  System Prompt
                 </label>
                 <textarea
                   value={customPrompt}
                   onChange={(e) => setCustomPrompt(e.target.value)}
-                  placeholder="당신은 마케팅 전문가입니다..."
+                  placeholder="You are a marketing expert..."
                   rows={3}
                   className="w-full bg-gray-800 text-gray-100 placeholder-gray-600 rounded-lg px-3 py-2 text-sm outline-none focus:ring-1 focus:ring-indigo-500 resize-none"
                 />
@@ -131,7 +131,7 @@ export default function CreateAgentModal({ onClose, onCreated }: Props) {
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
                   <line x1="12" y1="5" x2="12" y2="19" /><line x1="5" y1="12" x2="19" y2="12" />
                 </svg>
-                에이전트 추가
+                Add Agent
               </>
             )}
           </button>

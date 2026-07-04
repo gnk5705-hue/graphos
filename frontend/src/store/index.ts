@@ -32,6 +32,7 @@ interface AppState {
   setLoading: (loading: boolean) => void;
 
   setGraphData: (data: GraphData) => void;
+  mergeGlobalNodes: (data: GraphData) => void;
   updateNodePosition: (nodeId: string, position: Position) => void;
   setSelectedNode: (nodeId: string | null) => void;
   setNodeDetail: (detail: NodeDetail | null) => void;
@@ -55,6 +56,22 @@ function calcPosition(index: number): Position {
     x: ORIGIN_X + (index % NODE_COLS) * SPACING_X + (Math.random() - 0.5) * 40,
     y: ORIGIN_Y + Math.floor(index / NODE_COLS) * SPACING_Y + (Math.random() - 0.5) * 40,
   };
+}
+
+function assignPositions(
+  nodes: { id: string }[],
+  existing: Record<string, Position>
+): { positions: Record<string, Position> } {
+  const positions = { ...existing };
+  const existingCount = Object.keys(positions).length;
+  let newCount = 0;
+  nodes.forEach((node) => {
+    if (!positions[node.id]) {
+      positions[node.id] = calcPosition(existingCount + newCount);
+      newCount++;
+    }
+  });
+  return { positions };
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -98,16 +115,22 @@ export const useAppStore = create<AppState>((set) => ({
 
   setGraphData: (data) =>
     set((state) => {
-      const newPositions = { ...state.nodePositions };
-      const existingCount = Object.keys(newPositions).length;
-      let newCount = 0;
-      data.nodes.forEach((node) => {
-        if (!newPositions[node.id]) {
-          newPositions[node.id] = calcPosition(existingCount + newCount);
-          newCount++;
-        }
-      });
-      return { graphData: data, nodePositions: newPositions };
+      const { positions } = assignPositions(data.nodes, state.nodePositions);
+      return { graphData: data, nodePositions: positions };
+    }),
+
+  mergeGlobalNodes: (data) =>
+    set((state) => {
+      const nodeById = new Map(state.graphData.nodes.map((n) => [n.id, n]));
+      data.nodes.forEach((n) => nodeById.set(n.id, n));
+      const mergedNodes = Array.from(nodeById.values());
+
+      const edgeById = new Map(state.graphData.edges.map((e) => [e.id, e]));
+      data.edges.forEach((e) => edgeById.set(e.id, e));
+      const mergedEdges = Array.from(edgeById.values());
+
+      const { positions } = assignPositions(mergedNodes, state.nodePositions);
+      return { graphData: { nodes: mergedNodes, edges: mergedEdges }, nodePositions: positions };
     }),
 
   updateNodePosition: (nodeId, position) =>

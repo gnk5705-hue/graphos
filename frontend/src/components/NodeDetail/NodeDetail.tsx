@@ -5,12 +5,12 @@ import ConversationReplay from './ConversationReplay';
 import ActionPanel from './ActionPanel';
 
 const TYPE_CONFIG: Record<string, { color: string; label: string }> = {
-  topic: { color: '#60a5fa', label: '주제' },
-  project: { color: '#34d399', label: '프로젝트' },
-  task: { color: '#fbbf24', label: '작업' },
-  concept: { color: '#a78bfa', label: '개념' },
-  document: { color: '#f472b6', label: '문서' },
-  agent: { color: '#2dd4bf', label: '에이전트' },
+  topic: { color: '#60a5fa', label: 'Topic' },
+  project: { color: '#34d399', label: 'Project' },
+  task: { color: '#fbbf24', label: 'Task' },
+  concept: { color: '#a78bfa', label: 'Concept' },
+  document: { color: '#f472b6', label: 'Document' },
+  agent: { color: '#2dd4bf', label: 'Agent' },
 };
 
 type Tab = 'summary' | 'replay' | 'actions';
@@ -52,7 +52,7 @@ export default function NodeDetail() {
               <polyline points="15 18 9 12 15 6" />
             </svg>
           </button>
-          <span className="text-xs text-gray-500">노드 상세</span>
+          <span className="text-xs text-gray-500">Node Detail</span>
         </div>
         <div className="flex-1 flex items-center justify-center">
           <div className="flex gap-1.5">
@@ -80,7 +80,7 @@ export default function NodeDetail() {
           </button>
         </div>
         <div className="flex-1 flex items-center justify-center text-gray-600 text-sm">
-          노드 정보를 불러올 수 없습니다
+          Could not load node information
         </div>
       </div>
     );
@@ -88,7 +88,7 @@ export default function NodeDetail() {
 
   const { node, summary, related_messages, conversation_excerpts } = nodeDetail;
   const config = TYPE_CONFIG[node.node_type] ?? TYPE_CONFIG.concept;
-  const updatedAt = new Date(node.updated_at).toLocaleDateString('ko-KR', {
+  const updatedAt = new Date(node.updated_at).toLocaleDateString('en-US', {
     month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit',
   });
 
@@ -104,7 +104,7 @@ export default function NodeDetail() {
             <polyline points="15 18 9 12 15 6" />
           </svg>
         </button>
-        <span className="text-xs text-gray-500">마인드맵으로 돌아가기</span>
+        <span className="text-xs text-gray-500">Back to mind map</span>
       </div>
 
       {/* Node identity */}
@@ -126,10 +126,10 @@ export default function NodeDetail() {
         {/* Stats row */}
         <div className="flex gap-3 mt-2">
           <span className="text-[10px] text-gray-600">
-            관련 메시지 <span className="text-gray-400">{related_messages?.length ?? 0}개</span>
+            Related messages <span className="text-gray-400">{related_messages?.length ?? 0}</span>
           </span>
           <span className="text-[10px] text-gray-600">
-            대화 <span className="text-gray-400">{conversation_excerpts?.length ?? 0}개</span>
+            Conversations <span className="text-gray-400">{conversation_excerpts?.length ?? 0}</span>
           </span>
         </div>
       </div>
@@ -146,7 +146,7 @@ export default function NodeDetail() {
                 : 'text-gray-600 hover:text-gray-400'
             }`}
           >
-            {tab === 'summary' ? 'AI 요약' : tab === 'replay' ? 'Replay' : 'Actions'}
+            {tab === 'summary' ? 'AI Summary' : tab === 'replay' ? 'Replay' : 'Actions'}
           </button>
         ))}
       </div>
@@ -158,7 +158,7 @@ export default function NodeDetail() {
             {/* AI Summary */}
             {summary && (
               <div className="px-4 py-3 border-b border-gray-800/50">
-                <h3 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-2">AI 요약</h3>
+                <h3 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-2">AI Summary</h3>
                 <div className="bg-indigo-950/30 border border-indigo-900/50 rounded-xl p-3">
                   <p className="text-sm text-gray-300 leading-relaxed whitespace-pre-wrap">{summary}</p>
                 </div>
@@ -169,7 +169,7 @@ export default function NodeDetail() {
             {conversation_excerpts && conversation_excerpts.length > 0 && (
               <div className="px-4 py-3 border-b border-gray-800/50">
                 <h3 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-2">
-                  관련 대화 ({conversation_excerpts.length}개)
+                  Related Conversations ({conversation_excerpts.length})
                 </h3>
                 <div className="space-y-2">
                   {conversation_excerpts.map((excerpt: { conversation_id: string; conversation_title: string; messages: { id: string; role: string; content: string }[] }) => (
@@ -180,7 +180,7 @@ export default function NodeDetail() {
                           onClick={() => handleJumpToConversation(excerpt.conversation_id)}
                           className="text-[10px] text-indigo-400 hover:text-indigo-300 ml-2 flex-shrink-0 flex items-center gap-1 transition-colors"
                         >
-                          열기
+                          Open
                           <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                             <polyline points="9 18 15 12 9 6" />
                           </svg>
@@ -202,7 +202,7 @@ export default function NodeDetail() {
             {related_messages && related_messages.length > 0 && (
               <div className="px-4 py-3">
                 <h3 className="text-[10px] font-semibold uppercase tracking-wider text-gray-500 mb-2">
-                  관련 메시지 ({related_messages.length}개)
+                  Related Messages ({related_messages.length})
                 </h3>
                 <div className="space-y-2">
                   {related_messages.slice(0, 5).map((msg) => (
@@ -228,7 +228,7 @@ export default function NodeDetail() {
         {activeTab === 'replay' && selectedNodeId && (
           <div className="px-4 py-3">
             <p className="text-[10px] text-gray-500 mb-3">
-              이 노드와 관련된 메시지들을 주제별 스레드로 정리했습니다
+              Messages related to this node, organized into topic threads
             </p>
             <ConversationReplay nodeId={selectedNodeId} />
           </div>

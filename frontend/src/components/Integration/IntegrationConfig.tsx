@@ -10,7 +10,7 @@ export default function IntegrationConfig({ onClose }: Props) {
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
-          <h2 className="text-sm font-bold text-white">연동 설정</h2>
+          <h2 className="text-sm font-bold text-white">Integration Settings</h2>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-300 p-1 rounded-lg hover:bg-gray-800">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
               <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
@@ -20,7 +20,7 @@ export default function IntegrationConfig({ onClose }: Props) {
 
         <div className="p-5 space-y-5">
           <p className="text-xs text-gray-500">
-            연동 서비스는 <code className="bg-gray-800 px-1.5 py-0.5 rounded text-gray-300">backend/.env</code> 파일에 설정합니다.
+            Integrations are configured in the <code className="bg-gray-800 px-1.5 py-0.5 rounded text-gray-300">backend/.env</code> file.
           </p>
 
           {/* GitHub */}
@@ -35,7 +35,7 @@ export default function IntegrationConfig({ onClose }: Props) {
                 GITHUB_REPO=owner/repository
               </div>
               <p>• GitHub Settings → Developer settings → Personal access tokens → Classic</p>
-              <p>• 권한: <code className="text-gray-300">repo</code></p>
+              <p>• Permission: <code className="text-gray-300">repo</code></p>
             </div>
           </div>
 
@@ -51,12 +51,12 @@ export default function IntegrationConfig({ onClose }: Props) {
                 NOTION_PAGE_ID=your_page_id
               </div>
               <p>• notion.so/my-integrations → New integration → Internal</p>
-              <p>• 페이지 오른쪽 상단 ··· → Connections → 연동 추가</p>
-              <p>• NOTION_PAGE_ID: 페이지 URL의 32자리 ID</p>
+              <p>• Page top-right ··· → Connections → Add connection</p>
+              <p>• NOTION_PAGE_ID: the 32-character ID from the page URL</p>
             </div>
           </div>
 
-          <p className="text-[10px] text-gray-600 text-center">설정 후 백엔드 서버를 재시작하세요</p>
+          <p className="text-[10px] text-gray-600 text-center">Restart the backend server after configuring</p>
         </div>
       </div>
     </div>

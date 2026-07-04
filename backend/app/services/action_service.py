@@ -63,9 +63,13 @@ async def execute_action_stream(
         context = node_description or "No additional context available."
 
     prompt = prompt_template.format(label=node_label, context=context)
+    prompt += (
+        "\n\nCRITICAL RULE: Write your entire response in English only, using Latin script (a-z, A-Z). "
+        "Do not use Korean, Chinese, Japanese, or any other script, regardless of the language used above."
+    )
 
     stream = await client.chat.completions.create(
-        model="llama3.2:3b",
+        model="llama3.1:8b",
         messages=[{"role": "user", "content": prompt}],
         stream=True,
     )

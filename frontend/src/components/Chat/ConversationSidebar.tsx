@@ -8,21 +8,28 @@ export default function ConversationSidebar() {
     setActiveConversation,
     setMessages,
     setConversations,
+    setGraphData,
   } = useAppStore();
 
   const handleSelect = async (id: string) => {
     setActiveConversation(id);
     try {
-      const msgs = await api.getMessages(id);
+      const [msgs, graph] = await Promise.all([api.getMessages(id), api.getGraph(id)]);
       setMessages(msgs);
+      setGraphData(graph);
     } catch {
       setMessages([]);
     }
   };
 
-  const handleNew = () => {
+  const handleNew = async () => {
     setActiveConversation(null);
     setMessages([]);
+    try {
+      setGraphData(await api.getGraph(null));
+    } catch {
+      setGraphData({ nodes: [], edges: [] });
+    }
   };
 
   const handleDelete = async (e: React.MouseEvent, id: string) => {
@@ -44,9 +51,9 @@ export default function ConversationSidebar() {
     const d = new Date(iso);
     const now = new Date();
     const diff = now.getTime() - d.getTime();
-    if (diff < 86400000) return d.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
-    if (diff < 604800000) return d.toLocaleDateString('ko-KR', { weekday: 'short' });
-    return d.toLocaleDateString('ko-KR', { month: 'short', day: 'numeric' });
+    if (diff < 86400000) return d.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+    if (diff < 604800000) return d.toLocaleDateString('en-US', { weekday: 'short' });
+    return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
   };
 
   return (
@@ -60,14 +67,14 @@ export default function ConversationSidebar() {
             <line x1="12" y1="5" x2="12" y2="19" />
             <line x1="5" y1="12" x2="19" y2="12" />
           </svg>
-          새 대화
+          New Chat
         </button>
       </div>
 
       <div className="flex-1 overflow-y-auto py-2">
         {conversations.length === 0 && (
           <p className="text-gray-600 text-xs text-center mt-8 px-3">
-            대화를 시작하면<br />여기에 목록이 표시됩니다
+            Start a conversation<br />and it will appear here
           </p>
         )}
         {conversations.map((conv) => (

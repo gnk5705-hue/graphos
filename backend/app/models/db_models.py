@@ -29,6 +29,7 @@ class Conversation(Base):
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
     messages = relationship("Message", back_populates="conversation", cascade="all, delete-orphan")
+    graph_nodes = relationship("GraphNode", back_populates="conversation", cascade="all, delete-orphan")
 
 
 class Message(Base):
@@ -49,7 +50,11 @@ class GraphNode(Base):
     __tablename__ = "graph_nodes"
 
     id = Column(String, primary_key=True, default=lambda: str(uuid.uuid4()))
-    label = Column(String, nullable=False, unique=True)
+    # Nodes belong to the conversation that produced them, so different
+    # conversations never merge into one shared mind map. NULL means the
+    # node is "global" (agents and agent-session topics) and always visible.
+    conversation_id = Column(String, ForeignKey("conversations.id", ondelete="CASCADE"), nullable=True)
+    label = Column(String, nullable=False)
     node_type = Column(SAEnum(NodeTypeEnum), nullable=False, default=NodeTypeEnum.topic)
     description = Column(Text, default="")
     embedding = Column(Text, nullable=True)
@@ -57,6 +62,7 @@ class GraphNode(Base):
     created_at = Column(DateTime, default=datetime.utcnow)
     updated_at = Column(DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    conversation = relationship("Conversation", back_populates="graph_nodes")
     source_edges = relationship("GraphEdge", foreign_keys="GraphEdge.source_id", back_populates="source", cascade="all, delete-orphan")
     target_edges = relationship("GraphEdge", foreign_keys="GraphEdge.target_id", back_populates="target", cascade="all, delete-orphan")
     message_links = relationship("MessageNodeLink", back_populates="node", cascade="all, delete-orphan")

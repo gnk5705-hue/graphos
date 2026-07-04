@@ -33,10 +33,10 @@ const NODE_COLORS: Record<string, string> = {
 };
 
 const PERIOD_OPTIONS = [
-  { label: '7일', value: 7 },
-  { label: '30일', value: 30 },
-  { label: '90일', value: 90 },
-  { label: '1년', value: 365 },
+  { label: '7d', value: 7 },
+  { label: '30d', value: 30 },
+  { label: '90d', value: 90 },
+  { label: '1y', value: 365 },
 ];
 
 export default function TimelinePanel({ onClose }: { onClose: () => void }) {
@@ -56,13 +56,13 @@ export default function TimelinePanel({ onClose }: { onClose: () => void }) {
     const d = new Date(iso);
     const now = new Date();
     const diff = (now.getTime() - d.getTime()) / 86400000;
-    if (diff < 1) return '오늘';
-    if (diff < 2) return '어제';
-    return d.toLocaleDateString('ko-KR', { month: 'long', day: 'numeric' });
+    if (diff < 1) return 'Today';
+    if (diff < 2) return 'Yesterday';
+    return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric' });
   };
 
   const formatTime = (iso: string) =>
-    new Date(iso).toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' });
+    new Date(iso).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
 
   return (
     <div className="fixed inset-0 z-50 flex items-start justify-end" onClick={onClose}>
@@ -74,7 +74,7 @@ export default function TimelinePanel({ onClose }: { onClose: () => void }) {
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-800">
           <div>
             <h2 className="text-sm font-bold text-white">Timeline</h2>
-            <p className="text-[10px] text-gray-500 mt-0.5">지식 그래프의 성장 과정</p>
+            <p className="text-[10px] text-gray-500 mt-0.5">Growth of your knowledge graph</p>
           </div>
           <button onClick={onClose} className="text-gray-600 hover:text-gray-300 p-1 rounded-lg hover:bg-gray-800 transition-colors">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -89,11 +89,11 @@ export default function TimelinePanel({ onClose }: { onClose: () => void }) {
           <div className="grid grid-cols-2 gap-2 p-4 border-b border-gray-800">
             <div className="bg-gray-800/60 rounded-xl p-3 text-center">
               <p className="text-xl font-bold text-white">{data.stats.total_nodes}</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">전체 노드</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">Total Nodes</p>
             </div>
             <div className="bg-gray-800/60 rounded-xl p-3 text-center">
               <p className="text-xl font-bold text-white">{data.stats.total_conversations}</p>
-              <p className="text-[10px] text-gray-500 mt-0.5">전체 대화</p>
+              <p className="text-[10px] text-gray-500 mt-0.5">Total Conversations</p>
             </div>
           </div>
         )}
@@ -125,7 +125,7 @@ export default function TimelinePanel({ onClose }: { onClose: () => void }) {
 
           {!isLoading && (!data || data.grouped.length === 0) && (
             <div className="text-center text-gray-600 text-sm py-16">
-              해당 기간에 활동이 없습니다
+              No activity in this period
             </div>
           )}
 
@@ -184,12 +184,12 @@ export default function TimelinePanel({ onClose }: { onClose: () => void }) {
                         <div className="bg-indigo-950/30 border border-indigo-900/40 rounded-xl p-2.5">
                           <div className="flex items-center justify-between gap-2">
                             <span className="text-[9px] text-indigo-400 font-semibold uppercase tracking-wider">
-                              대화 시작
+                              Conversation Started
                             </span>
                             <span className="text-[10px] text-gray-600">{formatTime(event.date)}</span>
                           </div>
                           <p className="text-xs font-semibold text-gray-200 mt-1 line-clamp-1">{event.data.title}</p>
-                          <p className="text-[10px] text-gray-500 mt-0.5">{event.data.message_count}개 메시지</p>
+                          <p className="text-[10px] text-gray-500 mt-0.5">{event.data.message_count} messages</p>
                         </div>
                       )}
                     </div>

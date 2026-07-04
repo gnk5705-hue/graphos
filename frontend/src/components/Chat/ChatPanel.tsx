@@ -14,6 +14,7 @@ export default function ChatPanel() {
     addMessage,
     addOrUpdateConversation,
     setActiveConversation,
+    setGraphData,
   } = useAppStore();
 
   const [streamingContent, setStreamingContent] = useState<string | null>(null);
@@ -55,7 +56,7 @@ export default function ChatPanel() {
             id: crypto.randomUUID(),
             conversation_id: activeConversationId ?? '',
             role: 'assistant',
-            content: '오류가 발생했습니다. 백엔드 서버 및 OpenAI API 키를 확인해주세요.',
+            content: 'An error occurred. Please check the backend server and OpenAI API key.',
             created_at: new Date().toISOString(),
           });
         },
@@ -82,6 +83,14 @@ export default function ChatPanel() {
         } catch {
           // non-critical
         }
+
+        // Safety net: don't rely solely on the WebSocket broadcast, which can
+        // race with setActiveConversation for a brand-new conversation.
+        try {
+          setGraphData(await api.getGraph(finalConversationId));
+        } catch {
+          // non-critical
+        }
       }
     } finally {
       setStreamingContent(null);
@@ -100,8 +109,8 @@ export default function ChatPanel() {
               </svg>
             </div>
             <div className="text-center">
-              <p className="text-sm font-medium text-gray-400">GraphOS에 오신 것을 환영합니다</p>
-              <p className="text-xs mt-1">대화를 시작하면 AI가 자동으로 마인드맵을 생성합니다</p>
+              <p className="text-sm font-medium text-gray-400">Welcome to GraphOS</p>
+              <p className="text-xs mt-1">Start a conversation and AI will automatically build your mind map</p>
             </div>
           </div>
         )}

@@ -23,10 +23,11 @@ def disconnect_ws(websocket: WebSocket):
     active_connections.discard(websocket)
 
 
-async def broadcast_graph_update(db: Session):
-    graph = get_full_graph(db)
+async def broadcast_graph_update(db: Session, conversation_id: Optional[str] = None):
+    graph = get_full_graph(db, conversation_id)
     payload = json.dumps({
         "type": "graph_update",
+        "conversation_id": conversation_id,
         "nodes": [n.model_dump() for n in graph.nodes],
         "edges": [e.model_dump() for e in graph.edges],
     }, default=str)
@@ -41,10 +42,17 @@ async def broadcast_graph_update(db: Session):
         active_connections.discard(ws)
 
 
-def upsert_node(db: Session, label: str, node_type: str, description: str) -> GraphNode:
-    existing = db.query(GraphNode).filter(
-        func.lower(GraphNode.label) == label.lower()
-    ).first()
+def _find_node_by_label(db: Session, label: str, conversation_id: Optional[str]) -> Optional[GraphNode]:
+    query = db.query(GraphNode).filter(func.lower(GraphNode.label) == label.lower())
+    if conversation_id:
+        query = query.filter(GraphNode.conversation_id == conversation_id)
+    else:
+        query = query.filter(GraphNode.conversation_id.is_(None))
+    return query.first()
+
+
+def upsert_node(db: Session, label: str, node_type: str, description: str, conversation_id: Optional[str] = None) -> GraphNode:
+    existing = _find_node_by_label(db, label, conversation_id)
 
     if existing:
         if description and description != existing.description:
@@ -59,6 +67,7 @@ def upsert_node(db: Session, label: str, node_type: str, description: str) -> Gr
         label=label,
         node_type=node_type,
         description=description,
+        conversation_id=conversation_id,
         created_at=datetime.utcnow(),
         updated_at=datetime.utcnow(),
     )
@@ -68,9 +77,9 @@ def upsert_node(db: Session, label: str, node_type: str, description: str) -> Gr
     return node
 
 
-def upsert_edge(db: Session, source_label: str, target_label: str, relationship: str) -> Optional[GraphEdge]:
-    source = db.query(GraphNode).filter(func.lower(GraphNode.label) == source_label.lower()).first()
-    target = db.query(GraphNode).filter(func.lower(GraphNode.label) == target_label.lower()).first()
+def upsert_edge(db: Session, source_label: str, target_label: str, relationship: str, conversation_id: Optional[str] = None) -> Optional[GraphEdge]:
+    source = _find_node_by_label(db, source_label, conversation_id)
+    target = _find_node_by_label(db, target_label, conversation_id)
 
     if not source or not target or source.id == target.id:
         return None
@@ -96,11 +105,9 @@ def upsert_edge(db: Session, source_label: str, target_label: str, relationship:
     return edge
 
 
-def link_message_to_nodes(db: Session, message_id: str, node_labels: List[str]):
+def link_message_to_nodes(db: Session, message_id: str, node_labels: List[str], conversation_id: Optional[str] = None):
     for label in node_labels:
-        node = db.query(GraphNode).filter(
-            func.lower(GraphNode.label) == label.lower()
-        ).first()
+        node = _find_node_by_label(db, label, conversation_id)
         if not node:
             continue
         existing = db.query(MessageNodeLink).filter(
@@ -113,9 +120,23 @@ def link_message_to_nodes(db: Session, message_id: str, node_labels: List[str]):
     db.commit()
 
 
-def get_full_graph(db: Session) -> GraphResponse:
-    nodes = db.query(GraphNode).all()
-    edges = db.query(GraphEdge).all()
+def get_full_graph(db: Session, conversation_id: Optional[str] = None) -> GraphResponse:
+    """Nodes scoped to `conversation_id`, plus global nodes (conversation_id
+    IS NULL - agents and agent-session topics) which are always visible."""
+    query = db.query(GraphNode)
+    if conversation_id:
+        query = query.filter(or_(GraphNode.conversation_id == conversation_id, GraphNode.conversation_id.is_(None)))
+    else:
+        query = query.filter(GraphNode.conversation_id.is_(None))
+    nodes = query.all()
+
+    node_ids = [n.id for n in nodes]
+    edges = (
+        db.query(GraphEdge)
+        .filter(GraphEdge.source_id.in_(node_ids), GraphEdge.target_id.in_(node_ids))
+        .all()
+        if node_ids else []
+    )
     return GraphResponse(
         nodes=[GraphNodeSchema.model_validate(n) for n in nodes],
         edges=[GraphEdgeSchema.model_validate(e) for e in edges],

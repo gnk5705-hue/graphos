@@ -50,9 +50,9 @@ async def execute_action(node_id: str, req: ActionRequest, db: Session = Depends
         params = req.params or {}
         task_title = params.get("title", f"Task: {node_label}")
         task_desc = params.get("description", f"Task created from node: {node_label}")
-        task_node = upsert_node(db, task_title, "task", task_desc)
-        upsert_edge(db, node_label, task_node.label, "contains")
-        await broadcast_graph_update(db)
+        task_node = upsert_node(db, task_title, "task", task_desc, conversation_id=node.conversation_id)
+        upsert_edge(db, node_label, task_node.label, "contains", conversation_id=node.conversation_id)
+        await broadcast_graph_update(db, node.conversation_id)
         return {
             "action": "create_task",
             "node": GraphNodeSchema.model_validate(task_node),
@@ -104,9 +104,9 @@ async def execute_action(node_id: str, req: ActionRequest, db: Session = Depends
             yield f'data: {{"type": "token", "content": "{safe}"}}\n\n'
 
         doc_label = f"{node_label} — {action_type.replace('generate_', '').replace('_', ' ').title()}"
-        doc_node = upsert_node(db, doc_label, "document", full_output[:300])
-        upsert_edge(db, node_label, doc_node.label, "contains")
-        await broadcast_graph_update(db)
+        doc_node = upsert_node(db, doc_label, "document", full_output[:300], conversation_id=node.conversation_id)
+        upsert_edge(db, node_label, doc_node.label, "contains", conversation_id=node.conversation_id)
+        await broadcast_graph_update(db, node.conversation_id)
 
         node_data = {
             "id": doc_node.id,

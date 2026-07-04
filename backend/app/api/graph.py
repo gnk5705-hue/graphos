@@ -1,4 +1,5 @@
 from datetime import datetime
+from typing import Optional
 
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
@@ -12,8 +13,8 @@ router = APIRouter()
 
 
 @router.get("/graph", response_model=GraphResponse)
-def get_graph(db: Session = Depends(get_db)):
-    return get_full_graph(db)
+def get_graph(conversation_id: Optional[str] = None, db: Session = Depends(get_db)):
+    return get_full_graph(db, conversation_id)
 
 
 @router.post("/graph/search", response_model=SearchResponse)

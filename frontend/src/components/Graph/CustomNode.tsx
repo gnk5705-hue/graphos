@@ -4,12 +4,12 @@ import type { NodeType } from '../../types';
 type ExtendedNodeType = NodeType | 'agent';
 
 const TYPE_CONFIG: Record<ExtendedNodeType, { color: string; bg: string; label: string; icon: string }> = {
-  topic: { color: '#60a5fa', bg: '#1e3a5f', label: '주제', icon: '◉' },
-  project: { color: '#34d399', bg: '#064e3b', label: '프로젝트', icon: '◈' },
-  task: { color: '#fbbf24', bg: '#451a03', label: '작업', icon: '◆' },
-  concept: { color: '#a78bfa', bg: '#2e1065', label: '개념', icon: '◎' },
-  document: { color: '#f472b6', bg: '#500724', label: '문서', icon: '◇' },
-  agent: { color: '#2dd4bf', bg: '#022c22', label: '에이전트', icon: '★' },
+  topic: { color: '#60a5fa', bg: '#1e3a5f', label: 'Topic', icon: '◉' },
+  project: { color: '#34d399', bg: '#064e3b', label: 'Project', icon: '◈' },
+  task: { color: '#fbbf24', bg: '#451a03', label: 'Task', icon: '◆' },
+  concept: { color: '#a78bfa', bg: '#2e1065', label: 'Concept', icon: '◎' },
+  document: { color: '#f472b6', bg: '#500724', label: 'Document', icon: '◇' },
+  agent: { color: '#2dd4bf', bg: '#022c22', label: 'Agent', icon: '★' },
 };
 
 const AGENT_PERSONA_ICONS: Record<string, string> = {

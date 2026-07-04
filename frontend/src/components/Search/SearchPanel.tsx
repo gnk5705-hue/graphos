@@ -88,7 +88,7 @@ export default function SearchPanel({ onClose }: { onClose: () => void }) {
           <input
             ref={inputRef}
             type="text"
-            placeholder="의미 기반 검색... (예: 양자 컴퓨팅, 프로젝트 계획)"
+            placeholder="Semantic search... (e.g. quantum computing, project plan)"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             className="flex-1 bg-transparent text-gray-100 placeholder-gray-600 outline-none text-sm"
@@ -105,20 +105,20 @@ export default function SearchPanel({ onClose }: { onClose: () => void }) {
         <div className="max-h-[60vh] overflow-y-auto">
           {!searchQuery.trim() && (
             <div className="py-10 text-center text-gray-600 text-sm">
-              검색어를 입력하면 AI가 의미를 분석하여 관련 노드와 대화를 찾습니다
+              Type a query and AI will find related nodes and conversations by meaning
             </div>
           )}
 
           {searchQuery.trim() && !isLoading && isEmpty && (
             <div className="py-10 text-center text-gray-600 text-sm">
-              관련 결과를 찾을 수 없습니다
+              No related results found
             </div>
           )}
 
           {results && results.nodes.length > 0 && (
             <div className="p-3">
               <p className="text-[10px] text-gray-600 font-semibold uppercase tracking-wider px-2 mb-2">
-                노드 ({results.nodes.length})
+                Nodes ({results.nodes.length})
               </p>
               <div className="space-y-1">
                 {results.nodes.map((node) => (
@@ -154,7 +154,7 @@ export default function SearchPanel({ onClose }: { onClose: () => void }) {
           {results && results.messages.length > 0 && (
             <div className="p-3 border-t border-gray-800">
               <p className="text-[10px] text-gray-600 font-semibold uppercase tracking-wider px-2 mb-2">
-                관련 메시지 ({results.messages.length})
+                Related Messages ({results.messages.length})
               </p>
               <div className="space-y-1">
                 {results.messages.map((msg) => (
@@ -167,7 +167,7 @@ export default function SearchPanel({ onClose }: { onClose: () => void }) {
                       {msg.content}
                     </p>
                     <p className="text-[10px] text-gray-600 mt-1">
-                      {new Date(msg.created_at).toLocaleDateString('ko-KR')}
+                      {new Date(msg.created_at).toLocaleDateString('en-US')}
                     </p>
                   </button>
                 ))}

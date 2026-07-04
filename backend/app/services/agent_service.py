@@ -81,14 +81,22 @@ async def agent_chat_stream(
     system_prompt: str,
     graph_context: str = "",
 ) -> AsyncGenerator[str, None]:
-    full_system = system_prompt
+    full_system = (
+        system_prompt
+        + "\n\nCRITICAL RULE: Respond ONLY in English, using only Latin script (a-z, A-Z). "
+        "Never use Korean, Chinese, Japanese, or any other script, regardless of what language the user writes in."
+    )
     if graph_context:
         full_system += f"\n\nCurrent knowledge graph context:\n{graph_context}"
 
-    all_messages = [{"role": "system", "content": full_system}] + messages
+    language_reminder = {
+        "role": "system",
+        "content": "Reminder: reply only in English, Latin script only. Do not use Korean, Chinese, or Japanese characters.",
+    }
+    all_messages = [{"role": "system", "content": full_system}] + messages + [language_reminder]
 
     stream = await client.chat.completions.create(
-        model="llama3.2:3b",
+        model="llama3.1:8b",
         messages=all_messages,
         stream=True,
     )
