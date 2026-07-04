@@ -9,6 +9,7 @@ GraphOS is an open-source "Thinking OS" that automatically converts AI chat conv
 ## Features
 
 - **Live Mind Map** — Knowledge graph updates in real-time as you chat
+- **Per-Conversation Graphs** — Each conversation gets its own scoped graph, so topics never bleed across unrelated chats
 - **Topic Extraction** — AI automatically identifies and connects concepts
 - **Semantic Search** — Find anything across all your conversations (⌘K)
 - **Timeline View** — Browse your knowledge history over time
@@ -24,7 +25,7 @@ GraphOS is an open-source "Thinking OS" that automatically converts AI chat conv
 | Frontend | React 19, TypeScript, Vite 8, Tailwind v4, Zustand |
 | Graph | @xyflow/react (React Flow v12) |
 | Backend | FastAPI, SQLite, SQLAlchemy |
-| AI | Ollama (local) — llama3.2:3b + nomic-embed-text |
+| AI | Ollama (local) — llama3.1:8b + nomic-embed-text |
 | Realtime | SSE (chat streaming) + WebSocket (graph updates) |
 
 ## Quick Start
@@ -38,14 +39,14 @@ GraphOS is an open-source "Thinking OS" that automatically converts AI chat conv
 ### 1. Pull AI models
 
 ```bash
-ollama pull llama3.2:3b
+ollama pull llama3.1:8b
 ollama pull nomic-embed-text
 ```
 
 ### 2. Clone & install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/graphos.git
+git clone https://github.com/gnk5705-hue/graphos.git
 cd graphos
 ```
 
