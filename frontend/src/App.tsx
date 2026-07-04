@@ -191,14 +191,14 @@ export default function App() {
       <div className="flex flex-1 min-h-0">
         <ConversationSidebar />
 
-        <div className="flex flex-1 min-w-0">
+        <div className="flex flex-1 min-w-0 min-h-0">
           {/* Chat pane */}
-          <div className="flex flex-col border-r border-gray-800" style={{ width: '45%', minWidth: 0 }}>
+          <div className="flex flex-col min-h-0 border-r border-gray-800" style={{ width: '45%', minWidth: 0 }}>
             <ChatPanel />
           </div>
 
           {/* Right pane */}
-          <div className="flex-1 min-w-0 flex flex-col">
+          <div className="flex-1 min-w-0 min-h-0 flex flex-col">
             {rightPanel === 'graph' ? (
               <GraphPanel onOpenAgent={handleOpenAgent} />
             ) : (

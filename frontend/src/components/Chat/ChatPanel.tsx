@@ -99,7 +99,7 @@ export default function ChatPanel() {
   };
 
   return (
-    <div className="flex-1 flex flex-col min-w-0 bg-gray-950">
+    <div className="flex-1 flex flex-col min-w-0 min-h-0 bg-gray-950">
       <div className="flex-1 overflow-y-auto py-4 space-y-1">
         {messages.length === 0 && streamingContent === null && (
           <div className="flex flex-col items-center justify-center h-full text-gray-600 gap-3 pb-20">
